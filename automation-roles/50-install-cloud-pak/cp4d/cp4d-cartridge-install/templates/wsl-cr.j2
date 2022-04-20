@@ -1,0 +1,18 @@
+apiVersion: ws.cpd.ibm.com/v1beta1
+kind: WS
+metadata:
+  name: ws-cr
+  namespace: {{ current_cp4d_cluster.project }}
+spec:
+  license:
+    accept: true
+    license: Enterprise
+{% if selected_openshift_storage.storage_type == "pwx" %}
+  storageVendor: portworx
+  storageClass: portworx-shared-gp3
+{% else %}
+  storageClass: {{ ocp_storage_class_file }}
+{% endif %}
+{% if current_cp4d_cartridge.version is defined %}
+  version: {{ current_cp4d_cartridge.version }}
+{% endif %}

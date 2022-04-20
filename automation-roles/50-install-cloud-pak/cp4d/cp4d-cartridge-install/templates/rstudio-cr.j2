@@ -1,0 +1,18 @@
+apiVersion: rstudio.cpd.ibm.com/v1beta1
+kind: RStudioAddon
+metadata:
+  name: rstudio-cr
+  namespace: {{ current_cp4d_cluster.project }}
+spec:
+  scaleConfig: {{ current_cp4d_cartridge.size }}
+{% if selected_openshift_storage.storage_type == "pwx" %}
+  storageClass: portworx-shared-gp3
+{% else %} 
+  storageClass: {{ ocp_storage_class_file }}
+{% endif %}
+  license:
+    license: Enterprise
+    accept: true
+{% if current_cp4d_cartridge.version is defined %}
+  version: {{ current_cp4d_cartridge.version }}
+{% endif %}

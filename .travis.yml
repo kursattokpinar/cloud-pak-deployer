@@ -1,0 +1,44 @@
+# Skip any builds not for main branch
+if: branch = main
+
+language: node_js
+
+notifications:
+  email:
+    recipients:
+      - fketelaars@nl.ibm.com
+      - arthur.laimbock@nl.ibm.com
+      - wieglebm@de.ibm.com
+    on_failure: always # default: always
+    on_success: always # default: change
+
+
+node_js:
+  - '12.21.0'
+
+before_install:
+  - cd doc
+  - npm install
+  - npm install -g gatsby-cli
+cache:
+  yarn: true
+  directories:
+    - node_modules
+stages:
+  - name: script
+    # Require the branch name to be main (note for PRs this is the base branch name)
+    if: branch = main
+
+script:
+    # Test a prod build on PR builds as well as main merges, to catch deployment issues before merging of PRs
+  - yarn build:prod
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local_dir: doc/public
+  github-url: github.ibm.com
+  on:
+    branch: main

@@ -1,0 +1,22 @@
+apiVersion: discovery.watson.ibm.com/v1
+kind: WatsonDiscovery
+metadata:
+  name: wd
+  namespace: {{ current_cp4d_cluster.project }}
+  annotations:
+    oppy.ibm.com/disable-rollback: 'true'
+spec:
+  license:
+    accept: true
+  shared:
+    deploymentType: Production
+{% if selected_openshift_storage.storage_type == "pwx" %}
+    storageClassName: portworx-db-gp2-sc
+{% else %}
+    storageClassName: {{ ocp_storage_class_block }}
+{% endif %}
+  watsonGateway:
+    version: main
+{% if current_cp4d_cartridge.version is defined %}
+  version: {{ current_cp4d_cartridge.version }}
+{% endif %}
